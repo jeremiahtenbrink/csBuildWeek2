@@ -2,6 +2,7 @@ const express = require( "express" );
 const cors = require( "cors" );
 const helmet = require( "helmet" );
 const move = require('./routes/move.js');
+const auth = require('./routes/auth.js');
 const path = require( "path" );
 const bodyParser = require( "body-parser" );
 
@@ -17,7 +18,7 @@ server.use( bodyParser.urlencoded( { extended: true } ) );
 
 
 
-server.use('/move', move);
+server.use('/move',auth,  move);
 
 
 server.use("/api", (req, res) => {
