@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const db = require("../data/dbConfig.js");
-const auth = require('./routes/auth.js');
+const auth = require('./auth.js');
 
 /**
  * @api {get} /move     Gets the map
