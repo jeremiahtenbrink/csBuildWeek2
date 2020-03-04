@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "knex migrate:latest --env production",
     "server": "nodemon index.js",
     "api-docs": "apidoc -f .js -i ./routes -o apidoc/"
   },

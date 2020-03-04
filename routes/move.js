@@ -52,7 +52,7 @@ const db = require("../data/dbConfig.js");
  *
  */
 router.get('/', async (req, res) => {
-  const map = getMap();
+  const map = await getMap();
   res.status(200).json(map);
 });
 
