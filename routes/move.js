@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const db = require("../data/dbConfig.js");
+const auth = require('./routes/auth.js');
 
 /**
  * @api {get} /move     Gets the map
@@ -237,7 +238,7 @@ const getMap = async () => {
  *
  *
  */
-router.post('/', async (req, res) => {
+router.post('/', auth,  async (req, res) => {
   const {dir, prev_room, next_room} = req.body;
   
   let prev = await db('rooms').where({room_id: prev_room.room_id}).first();
@@ -323,7 +324,7 @@ router.post('/', async (req, res) => {
  *
  *
  */
-router.put('/', async (req, res) => {
+router.put('/',auth,  async (req, res) => {
   const {room} = req.body;
   try {
     let result = await db("rooms").update(room);
