@@ -113,7 +113,7 @@ router.get('/title', async (req, res) => {
   Object.keys(map).forEach(key => {
     mapTitle[map[key].title + " " + map[key].room_id] = map[key];
   });
-  mapTitle["# rooms"] = map.length;
+  mapTitle[""] = map.length;
   res.status(200).json(mapTitle);
 });
 
