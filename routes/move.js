@@ -56,6 +56,65 @@ router.get('/', async (req, res) => {
   res.status(200).json(map);
 });
 
+/**
+ * @api {get} /title     Gets the map with titles as the keys
+ * @apiVersion 1.0.0
+ * @apiName GetMapTitle
+ * @apiGroup Map
+ *
+ *
+ * @apiExample Request example:
+ * const request = axios.create({
+ *     baseURL: 'http://localhost:5000/',
+        timeout: 1000,
+ * });
+ * request.get('/title');
+ *
+ * @apiUse Error
+ *
+ * @apiSuccessExample Map
+ *
+ {  "A misty room": {
+        "room_id": 4,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(61,60)",
+        "items": "{}",
+        "exits": {
+            "n": 23,
+            "e": 13,
+            "w": "?"
+        },
+        "messages": null
+    }, "A misty room": {
+        "room_id": 13,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(62,60)",
+        "items": "{}",
+        "exits": {
+            "e": 15,
+            "w": 4
+        },
+        "messages": null
+    },
+ 
+ }
+ *
+ */
+router.get('/title', async (req, res) => {
+  const map = await getMap();
+  const mapTitle = {};
+  Object.keys(map).forEach(item => {
+    mapTitle[item.title + " " + item.room_id] = item;
+  });
+  res.status(200).json(mapTitle);
+});
+
 const getMap = async () => {
   const rooms = await db('rooms');
   const map = {};
