@@ -120,6 +120,12 @@ const getMap = async () => {
   const map = {};
   rooms.forEach(room => {
     room.exits = JSON.parse(room.exits);
+    try {
+      room.items = JSON.parse(room.items);
+    }catch (e){
+      room.items = [];
+    }
+    
     map[room.room_id] = room;
   });
   return map;
@@ -198,6 +204,8 @@ router.post('/', async (req, res) => {
   delete(next_room['errors']);
   delete(next_room['messages']);
   
+  next_room['items'] = JSON.stringify(next_room['items']);
+  prev_room['items'] = JSON.stringify(prev_room['items']);
   
   if (prev){
     prev.exits = JSON.parse(prev.exits)
