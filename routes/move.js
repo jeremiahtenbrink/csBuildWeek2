@@ -260,19 +260,20 @@ router.post('/', async (req, res) => {
     prev.exits = JSON.parse(prev.exits)
   }else {
     prev = await makeRoom(prev_room);
-    prev = prev[0]
+    prev = prev[0];
     prev.exits = JSON.parse(prev.exits);
   }
   if (next){
     next.exits = JSON.parse(next.exits)
   }else {
     next = await makeRoom(next_room);
-    next = next[0]
+    next = next[0];
     next.exits = JSON.parse(next.exits);
   }
   
   prev.exits[dir] = next.room_id;
-  next.exits[getReverseDirection(dir)] = prev.room_id;
+  let revDirection = getReverseDirection(dir);
+  next.exits[revDirection] = prev.room_id;
   let resultNext = await updateRoom(next);
   let resultPrev = await updateRoom(prev);
   
@@ -341,10 +342,10 @@ router.put('/', async (req, res) => {
 
 const getReverseDirection= (dir) => {
   let directions = {
-    "n": "s",
-    "s": "n",
-    "e": "w",
-    "w": "e"
+    n: "s",
+    s: "n",
+    e: "w",
+    w: "e"
   };
   return directions[dir];
 };
@@ -355,15 +356,14 @@ const updateRoom = (room) => {
 };
 
 const makeRoom = (room) => {
-  exits = room.exits;
-  exitsOb = {
-  
-  };
-  exits.forEach( exit => {
-    exitsOb[exit] = "?"
-  });
-  
-  room.exits = JSON.stringify(exitsOb);
+  if (Array.isArray(room.exits)){
+    let exitOb = {};
+    room.exits.forEach(exit => {
+      exitOb[exit] = "?"
+    });
+    room.exits = exitOb;
+  }
+  room.exits = JSON.stringify(room.exits);
   return db('rooms').insert(room).returning('*')
   
 };
