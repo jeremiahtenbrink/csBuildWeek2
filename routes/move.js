@@ -1,18 +1,128 @@
 const router = require("express").Router();
 const db = require("../data/dbConfig.js");
 
+/**
+ * @api {get} /move     Gets the map
+ * @apiVersion 1.0.0
+ * @apiName GetMap
+ * @apiGroup Map
+ *
+ *
+ * @apiExample Request example:
+ * const request = axios.create({
+ *     baseURL: 'http://localhost:5000/',
+        timeout: 1000,
+ * });
+ * request.get('/move');
+ *
+ * @apiUse Error
+ *
+ * @apiSuccessExample Map
+ *
+ {  "4": {
+        "room_id": 4,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(61,60)",
+        "items": "{}",
+        "exits": {
+            "n": 23,
+            "e": 13,
+            "w": "?"
+        },
+        "messages": null
+    }, "13": {
+        "room_id": 13,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(62,60)",
+        "items": "{}",
+        "exits": {
+            "e": 15,
+            "w": 4
+        },
+        "messages": null
+    },
+ 
+ }
+ *
+ */
 router.get('/', async (req, res) => {
-  const rooms = await db('rooms');
-  const map = {};
-  rooms.forEach(room => {
-    room.exits = JSON.parse(room.exits)
-    map[room.room_id] = room;
-  });
-  
+  const map = getMap();
   res.status(200).json(map);
 });
 
+const getMap = async () => {
+  const rooms = await db('rooms');
+  const map = {};
+  rooms.forEach(room => {
+    room.exits = JSON.parse(room.exits);
+    map[room.room_id] = room;
+  });
+  return map;
+};
 
+/**
+ * @api {post} /move     Post new route to the server
+ * @apiVersion 1.0.0
+ * @apiName PostRoute
+ * @apiGroup Move
+ *
+ * @apiParam {String} dir The direction you moved from the prev to the next.
+ * @apiParam {Object} prev_room The room you moved out of.
+ * @apiParam {Object} next_room The room you moved into.
+ *
+ * @apiExample Request example:
+ * const request = axios.create({
+ *     baseURL: 'http://localhost:5000/',
+        timeout: 1000,
+ * });
+ * request.post('/move', {
+ *   dir: "n",
+ *   prev_room: {room_id: "1" ...},
+ *   new_room: {room_id: "2" ...}
+ * });
+ *
+ * @apiUse Error
+ *
+ * @apiSuccessExample Updated map
+ *{  "4": {
+        "room_id": 4,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(61,60)",
+        "items": "{}",
+        "exits": {
+            "n": 23,
+            "e": 13,
+            "w": "?"
+        },
+        "messages": null
+    }, "13": {
+        "room_id": 13,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(62,60)",
+        "items": "{}",
+        "exits": {
+            "e": 15,
+            "w": 4
+        },
+        "messages": null
+    },
+ 
+ }
+ *
+ *
+ */
 router.post('/', async (req, res) => {
   const {dir, prev_room, next_room} = req.body;
   
@@ -50,8 +160,8 @@ router.post('/', async (req, res) => {
   let resultNext = await updateRoom(next);
   let resultPrev = await updateRoom(prev);
   
-  console.log(resultNext)
-  res.status(200).json({message: "moved ok"})
+  const map = await getMap();
+  res.status(201).json(map)
 });
 
 const getReverseDirection= (dir) => {
