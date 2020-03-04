@@ -280,6 +280,65 @@ router.post('/', async (req, res) => {
   res.status(201).json(map)
 });
 
+/**
+ * @api {put} /move     Update room
+ * @apiVersion 1.0.0
+ * @apiName UpdateRoom
+ * @apiGroup Move
+ *
+ * @apiParam {Object} room The room you moved out of.
+ *
+ * @apiExample Request example:
+ * const request = axios.create({
+ *     baseURL: 'http://localhost:5000/',
+        timeout: 1000,
+ * });
+ * request.put('/', {
+ *   dir: "n",
+ *   prev_room: {room_id: "1" ...},
+ *   new_room: {room_id: "2" ...}
+ * });
+ *
+ * @apiUse Error
+ *
+ * @apiSuccessExample Updated map
+ *{  "4": {
+        "room_id": 4,
+        "title": "A misty room",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(61,60)",
+        "items": "{}",
+        "exits": {
+            "n": "?",
+            "e": 13,
+            "w": "?"
+        },
+        "messages": null
+    }
+ 
+ }
+ *
+ *
+ */
+router.put('/', async (req, res) => {
+  const {room} = req.body;
+  try {
+    let result = await db("rooms").update(room);
+    if (result === 1){
+      let room = await db('rooms').select("*").where({room_id: room.room_id});
+      res.status(200).json(room);
+    }else {
+      res.status(500).json({message: "Update failed."})
+    }
+  }catch( e ){
+    res.status(500).json({message: e.message})
+  }
+  
+});
+
+
 const getReverseDirection= (dir) => {
   let directions = {
     "n": "s",
