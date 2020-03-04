@@ -116,6 +116,54 @@ router.get('/title', async (req, res) => {
   res.status(200).json(mapTitle);
 });
 
+/**
+ * @api {get} /move/shop     Gets the map with titles as the keys
+ * @apiVersion 1.0.0
+ * @apiName GetRoomNumberOfTheShop
+ * @apiGroup Map
+ *
+ *
+ * @apiExample Request example:
+ * const request = axios.create({
+ *     baseURL: 'http://localhost:5000/',
+        timeout: 1000,
+ * });
+ * request.get('/title');
+ *
+ * @apiUse Error
+ *
+ * @apiSuccessExample Map
+ *
+ {
+        "room_id": 5,
+        "title": "shop",
+        "terrain": "NORMAL",
+        "elevation": "0",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(61,60)",
+        "items": "{}",
+        "exits": {
+            "n": 23,
+            "e": 13,
+            "w": "?"
+        },
+        "messages": null
+  },
+ 
+ *
+ */
+router.get('/title', async (req, res) => {
+  const map = await getMap();
+  let mapShop = {};
+  Object.keys(map).forEach(key => {
+    if (map[key].title === "shop"){
+      mapShop = map[key]
+    }
+  });
+  
+  res.status(200).json(mapShop);
+});
+
 const getMap = async () => {
   const rooms = await db('rooms');
   const map = {};
