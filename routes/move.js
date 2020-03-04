@@ -152,7 +152,7 @@ router.get('/title', async (req, res) => {
  
  *
  */
-router.get('/title', async (req, res) => {
+router.get('/shop', async (req, res) => {
   const map = await getMap();
   let mapShop = {};
   Object.keys(map).forEach(key => {
