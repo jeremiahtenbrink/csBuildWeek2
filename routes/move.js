@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * @api {get} /title     Gets the map with titles as the keys
+ * @api {get} /move/title     Gets the map with titles as the keys
  * @apiVersion 1.0.0
  * @apiName GetMapTitle
  * @apiGroup Map
@@ -109,8 +109,8 @@ router.get('/', async (req, res) => {
 router.get('/title', async (req, res) => {
   const map = await getMap();
   const mapTitle = {};
-  Object.keys(map).forEach(item => {
-    mapTitle[item.title + " " + item.room_id] = item;
+  Object.keys(map).forEach(key => {
+    mapTitle[map[key].title + " " + map[key].room_id] = map[key];
   });
   res.status(200).json(mapTitle);
 });
